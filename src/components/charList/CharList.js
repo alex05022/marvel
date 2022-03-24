@@ -3,26 +3,16 @@ import PropTypes from 'prop-types';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import useMarvelService from '../../services/MarvelService';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import './charList.scss';
 
 //tttttttt
 const CharList = (props) => {
    
     const [charList, setCharList] = useState([]);
-    // const [loading, setLoading] = useState(true);
-    // const [error, setError] = useState(false);
     const [newItemLoading, setNewItemLoading] = useState(false);
     const [offset, setOffset] = useState(210);
     const [charEnded, setCharEnded] = useState(false);
-
-    // state = {
-    //     charList:[],
-    //     loading: true,
-    //     error: false,
-    //     newItemLoading: false,
-    //     offset: 210,
-    //     charEnded: false
-    // }
 
     const {loading, error, getAllCharacters} = useMarvelService();
 
@@ -30,31 +20,18 @@ const CharList = (props) => {
         onRequest(offset, true);
     }, [])
 
-    // componentDidMount() {
-    //     this.onRequest();
-    // }
-
     const onRequest = (offset, initial) => {
         initial ? setNewItemLoading(false) : setNewItemLoading(true);
         getAllCharacters(offset)
             .then(onCharListLoaded)
     }
 
-    
-
     const onCharListLoaded = (newCharList) => {
+
         let ended = false;
         if (newCharList.length < 9) {
             ended = true;
         }
-
-        // this.setState(({offset, charList}) => ({
-        //     charList: [...charList, ...newCharList],
-        //     loading: false,
-        //     newItemLoading: false,
-        //     offset: offset + 9,
-        //     charEnded: ended
-        // }))
 
         setCharList(charList => [...charList, ...newCharList]);
         setNewItemLoading(newItemLoading => false);
@@ -66,10 +43,6 @@ const CharList = (props) => {
     //фокус ref
 
     const itemRefs = useRef([]);
-
-    // setRef = (ref) => {
-    //     this.itemRefs.push(ref);
-    // }
 
     const focusOnItem = (id) =>{
         itemRefs.current.forEach(item => item.classList.remove('char__item_selected'));
@@ -87,57 +60,69 @@ const CharList = (props) => {
             }
 
             return (
-                <li
-                    className="char__item"
-                    tabIndex={0}
-                    ref={el => itemRefs.current[i] = el}
-                    key={item.id}
-                    onClick={() => {
-                        props.onCharSeleced(item.id);
-                        focusOnItem(i)}}
-                    onKeyPress={(e) => {
-                        if (e.key === '' || e.key === "Enter") {
+                <CSSTransition key={item.id} timeout={300}
+                classNames="char__item">
+                    
+                    <li
+                        
+                        className="char__item"
+                        tabIndex={0}
+                        ref={el => itemRefs.current[i] = el}
+                        
+                        onClick={() => {
                             props.onCharSeleced(item.id);
-                            focusOnItem(i);
-                        }
-                    }}>
-                        <img src={item.thumbnail} alt={item.name} style={imgStyle}/>
-                        <div className="char__name">{item.name}</div>
-                </li>
+                            focusOnItem(i)}}
+                        onKeyPress={(e) => {
+                            if (e.key === '' || e.key === "Enter") {
+                                props.onCharSeleced(item.id);
+                                focusOnItem(i);
+                            }
+                        }}
+                        
+                        >
+                            <img src={item.thumbnail} alt={item.name} style={imgStyle}/>
+                            <div className="char__name">{item.name}</div>
+                    </li>
+                    
+                </CSSTransition>
             )
         });
         // А эта конструкция вынесена для центровки спиннера/ошибки
         return (
-            <ul className="char__grid">
-                {items}
-            </ul>
+           
+                    <ul className="char__grid">
+                        <TransitionGroup component={null}>
+                            {items}
+                        </TransitionGroup>
+                    </ul>
+            
         )
     }
 
-    
-
-    // const {charList, loading, error, offset, newItemLoading, charEnded} = this.state;
-
+   
     const items = renderItems(charList);
 
     const errorMessage = error ? <ErrorMessage/> : null;
     const spinner = loading && !newItemLoading ? <Spinner/> : null;
-    // const content = !(loading || error) ? items : null;
 
     return (
-        <div className="char__list">
-            {errorMessage}
-            {spinner}
-            {items}
-            {/* {content} */}
-            <button 
-                className="button button__main button__long"
-                disabled={newItemLoading}
-                style={{'display': charEnded ? 'none' : 'block'}}
-                onClick={() => onRequest(offset)}>
-                <div className="inner">load more</div>
-            </button>
-        </div>
+        
+            
+                <div  className="char__list" 
+                >
+                    {errorMessage}
+                    {spinner}
+                    {items}
+                    {/* {content} */}
+                    <button 
+                        className="button button__main button__long"
+                        disabled={newItemLoading}
+                        style={{'display': charEnded ? 'none' : 'block'}}
+                        onClick={() => onRequest(offset)}>
+                        <div className="inner">load more</div>
+                    </button>
+                </div>
+            
     )
     
 }

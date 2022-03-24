@@ -5,6 +5,8 @@ import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Skeleton from '../skeleton/Skeleton';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+
 
 import './charInfo.scss';
 
@@ -40,10 +42,13 @@ const CharInfo = (props) => {
 
     return (
         <div className="char__info">
-            {skeleton}
-            {errorMessage}
-            {spinner}
-            {content}
+            
+                {skeleton}
+                {errorMessage}
+                {spinner}
+                
+                {content}
+            
         </div>
     )
 }
@@ -58,38 +63,40 @@ const View = ({char}) => {
 
     return (
         <>
-            <div className="char__basics">
-                <img src={thumbnail} alt={name} style={imgStyle}/>
-                <div>
-                    <div className="char__info-name">{name}</div>
-                    <div className="char__btns">
-                        <a href={homepage} className="button button__main">
-                            <div className="inner">homepage</div>
-                        </a>
-                        <a href={wiki} className="button button__secondary">
-                            <div className="inner">Wiki</div>
-                        </a>
+            
+                <div className="char__basics">
+                    <img src={thumbnail} alt={name} style={imgStyle}/>
+                    <div>
+                        <div className="char__info-name">{name}</div>
+                        <div className="char__btns">
+                            <a href={homepage} className="button button__main">
+                                <div className="inner">homepage</div>
+                            </a>
+                            <a href={wiki} className="button button__secondary">
+                                <div className="inner">Wiki</div>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div className="char__descr">
-                {description}
-            </div>
-            <div className="char__comics">Comics:</div>
-            <ul className="char__comics-list">
-                {comics.length > 0 ? null : 'There is no comics with this character'}
-                {
-                    comics.map((item, i) => {
-                        // eslint-disable-next-line
-                        if (i > 9) return;
-                        return (
-                            <li key={i} className="char__comics-item">
-                                {item.name}
-                            </li>
-                        )
-                    })
-                }                
-            </ul>
+                <div className="char__descr">
+                    {description}
+                </div>
+                <div className="char__comics">Comics:</div>
+                <ul className="char__comics-list">
+                    {comics.length > 0 ? null : 'There is no comics with this character'}
+                    {
+                        comics.map((item, i) => {
+                            // eslint-disable-next-line
+                            if (i > 9) return;
+                            return (
+                                <li key={i} className="char__comics-item">
+                                    {item.name}
+                                </li>
+                            )
+                        })
+                    }                
+                </ul>
+            
         </>
     )
 }
