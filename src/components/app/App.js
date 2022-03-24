@@ -23,7 +23,7 @@ const App = () => {
                 <main>
                      <Suspense fallback={<Spinner/>}>
                         <Routes>
-                            <Route path="" element={<MainPage/>}/>
+                            <Route path="/marvel" element={<MainPage/>}/>
                             <Route path="/comics" element={<ComicsPage/>}/>
                             <Route path="/comics/:comicId" element={<SingleComicPage/>}/>
                             <Route path="*"
