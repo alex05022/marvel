@@ -1,10 +1,13 @@
 import { useState } from "react";
+import {Helmet} from "react-helmet";
 import RandomChar from "../randomChar/RandomChar";
 import CharList from "../charList/CharList";
 import CharInfo from "../charInfo/CharInfo";
+import CharSearchForm from "../charSearchForm/CharSearchForm";
 import ErrorBountdady from "../errorBountdary/ErrorBountdady";
 
 import decoration from '../../resources/img/vision.png';
+
 
 const MainPage = () => {
 
@@ -16,6 +19,13 @@ const MainPage = () => {
 
     return(
         <>
+            <Helmet>
+                <meta
+                    name="description"
+                    content="Marvel information portal"
+                />
+                <title>Marvel information portal</title>
+            </Helmet>
             <ErrorBountdady>
                 <RandomChar/>
             </ErrorBountdady>
@@ -23,9 +33,15 @@ const MainPage = () => {
                 <ErrorBountdady>
                     <CharList onCharSeleced={onCharSelected}/>
                 </ErrorBountdady>
-                <ErrorBountdady>
-                    <CharInfo charId={selectedChar}/>
-            </ErrorBountdady>
+                <div> 
+                    {/* добовляем div чтоб отображалось на сайте*/}
+                    <ErrorBountdady>
+                        <CharInfo charId={selectedChar}/>
+                    </ErrorBountdady>
+                    <ErrorBountdady>
+                        <CharSearchForm/>
+                    </ErrorBountdady>
+                </div>
             </div>
             <img className="bg-decoration" src={decoration} alt="vision"/>
         </>
