@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
@@ -11,16 +11,12 @@ const setContent = (process, Component, newItemLoading) => {
     switch (process) {
         case 'waiting':
             return <Spinner/>;
-            break;
         case 'loading':
             return  newItemLoading ? <Component/> : <Spinner/>;
-            break;
         case 'confirmed':
             return <Component/>;
-            break;
         case 'error':
             return <ErrorMessage/>;
-            break;
         default:
             throw new Error('Unexpeted process state');
     }
@@ -33,7 +29,7 @@ const CharList = (props) => {
     const [offset, setOffset] = useState(210);
     const [charEnded, setCharEnded] = useState(false);
 
-    const {loading, error, getAllCharacters, process, setProcess} = useMarvelService();
+    const {getAllCharacters, process, setProcess} = useMarvelService();
 
     useEffect(() => {
         onRequest(offset, true);
@@ -73,6 +69,7 @@ const CharList = (props) => {
     // Этот метод создан для оптимизации, 
     // чтобы не помещать такую конструкцию в метод render
     function renderItems(arr) {
+        console.log('render')
         const items = arr.map((item,i) => {
             let imgStyle = {'objectFit' : 'cover'};
             if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
@@ -119,10 +116,15 @@ const CharList = (props) => {
         )
     }
 
+    const elements = useMemo(() => {
+       return setContent(process, () => renderItems(charList), newItemLoading)
+       //eslint-disable-next-line
+    }, [process]);
+
     return (
            
         <div  className="char__list">
-            {setContent(process, () => renderItems(charList), newItemLoading)}
+            {elements}
             <button 
                 className="button button__main button__long"
                 disabled={newItemLoading}
